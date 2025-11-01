@@ -1,4 +1,4 @@
-from config import openai_client, OPENAI_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_COMPLETION_TOKENS
 
 def generate_response(email_context: dict, security_result: dict, doc_info: dict) -> dict:
     """
@@ -59,7 +59,7 @@ Do not include greeting or signature, just the body."""
 
     response = openai_client.chat.completions.create(
         model=OPENAI_MODEL,
-        max_tokens=MAX_TOKENS,
+        max_completion_tokens=MAX_COMPLETION_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
 

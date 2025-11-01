@@ -1,6 +1,6 @@
 import json
 import re
-from config import openai_client, OPENAI_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_COMPLETION_TOKENS
 from data.supermemory import search_documents
 
 def find_documents(email_body: str) -> dict:
@@ -22,7 +22,7 @@ Example: {{"search_query": "financial report", "request_type": "quarterly report
 
     response = openai_client.chat.completions.create(
         model=OPENAI_MODEL,
-        max_tokens=MAX_TOKENS,
+        max_completion_tokens=MAX_COMPLETION_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
 

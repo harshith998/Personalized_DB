@@ -1,6 +1,6 @@
 import json
 import re
-from config import openai_client, OPENAI_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_COMPLETION_TOKENS
 
 def check_permissions(user_profile: dict, doc_info: dict) -> dict:
     """
@@ -26,7 +26,7 @@ Respond with ONLY a JSON object:
 
     response = openai_client.chat.completions.create(
         model=OPENAI_MODEL,
-        max_tokens=MAX_TOKENS,
+        max_completion_tokens=MAX_COMPLETION_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
 
