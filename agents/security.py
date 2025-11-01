@@ -1,6 +1,6 @@
 import json
 import re
-from config import claude_client, CLAUDE_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_TOKENS
 
 def check_permissions(user_profile: dict, doc_info: dict) -> dict:
     """
@@ -24,13 +24,13 @@ Rules:
 Respond with ONLY a JSON object:
 {{"approved": true/false, "reasoning": "brief explanation", "selected_doc": "doc_id or null"}}"""
 
-    response = claude_client.messages.create(
-        model=CLAUDE_MODEL,
+    response = openai_client.chat.completions.create(
+        model=OPENAI_MODEL,
         max_tokens=MAX_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
-    
-    llm_output = response.content[0].text.strip()
+
+    llm_output = response.choices[0].message.content.strip()
     
     # Try to extract JSON if wrapped in markdown or extra text
     json_match = re.search(r'\\{.*\\}', llm_output, re.DOTALL)

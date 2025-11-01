@@ -1,6 +1,6 @@
 import json
 import re
-from config import claude_client, CLAUDE_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_TOKENS
 from data.supermemory import search_documents
 
 def find_documents(email_body: str) -> dict:
@@ -20,13 +20,13 @@ Respond with ONLY a JSON object in this exact format:
 
 Example: {{"search_query": "financial report", "request_type": "quarterly report"}}"""
 
-    response = claude_client.messages.create(
-        model=CLAUDE_MODEL,
+    response = openai_client.chat.completions.create(
+        model=OPENAI_MODEL,
         max_tokens=MAX_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
-    
-    llm_output = response.content[0].text.strip()
+
+    llm_output = response.choices[0].message.content.strip()
     
     # Try to extract JSON if wrapped in markdown or extra text
     json_match = re.search(r'\\{.*\\}', llm_output, re.DOTALL)

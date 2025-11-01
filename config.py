@@ -1,13 +1,17 @@
 import os
-from anthropic import Anthropic
+from openai import OpenAI
+from dotenv import load_dotenv
 
-# Anthropic API setup
-ANTHROPIC_API_KEY = 'key'
-if not ANTHROPIC_API_KEY:
-    raise ValueError("ANTHROPIC_API_KEY environment variable not set")
+# Load environment variables from .env file
+load_dotenv()
 
-claude_client = Anthropic(api_key=ANTHROPIC_API_KEY)
+# OpenAI API setup - load from environment variable
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable not set")
+
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Model configuration
-CLAUDE_MODEL = "claude-sonnet-4-20250514"
+OPENAI_MODEL = "gpt-5"
 MAX_TOKENS = 500

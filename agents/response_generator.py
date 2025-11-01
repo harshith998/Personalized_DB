@@ -1,4 +1,4 @@
-from config import claude_client, CLAUDE_MODEL, MAX_TOKENS
+from config import openai_client, OPENAI_MODEL, MAX_TOKENS
 
 def generate_response(email_context: dict, security_result: dict, doc_info: dict) -> str:
     """
@@ -57,10 +57,10 @@ Write a polite response that:
 
 Do not include greeting or signature, just the body."""
 
-    response = claude_client.messages.create(
-        model=CLAUDE_MODEL,
+    response = openai_client.chat.completions.create(
+        model=OPENAI_MODEL,
         max_tokens=MAX_TOKENS,
         messages=[{"role": "user", "content": prompt}]
     )
-    
-    return response.content[0].text
+
+    return response.choices[0].message.content
