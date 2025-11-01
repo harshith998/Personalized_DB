@@ -6,10 +6,10 @@ from data.supermemory import search_documents
 def find_documents(email_body: str) -> dict:
     """
     Analyze email and find relevant documents
-    Returns: dict with search_query, request_type, and documents list
+    Returns: dict with search_query, request_type, documents list, and step info
     """
     print("\\n🔍 [Agent 1: Doc Finder] Analyzing request...")
-    
+
     prompt = f"""Analyze this email and extract what document the user is requesting.
 
 Email body:
@@ -27,12 +27,12 @@ Example: {{"search_query": "financial report", "request_type": "quarterly report
     )
 
     llm_output = response.choices[0].message.content.strip()
-    
+
     # Try to extract JSON if wrapped in markdown or extra text
     json_match = re.search(r'\\{.*\\}', llm_output, re.DOTALL)
     if json_match:
         llm_output = json_match.group(0)
-    
+
     try:
         parsed = json.loads(llm_output)
     except json.JSONDecodeError as e:
@@ -42,16 +42,29 @@ Example: {{"search_query": "financial report", "request_type": "quarterly report
             "search_query": email_body[:50],
             "request_type": "document"
         }
-    
+
     # Search documents using extracted query
     search_query = parsed.get("search_query", email_body[:50])
     docs = search_documents(search_query)
-    
+
     print(f"   Query: '{search_query}'")
     print(f"   Found {len(docs)} document(s)")
-    
+
+    # Return structured data with step info
     return {
         "search_query": search_query,
         "request_type": parsed.get("request_type"),
-        "documents": docs
+        "documents": docs,
+        "step_info": {
+            "agent": "Doc Finder",
+            "status": "complete",
+            "icon": "🔍",
+            "data": {
+                "search_query": search_query,
+                "request_type": parsed.get("request_type"),
+                "documents_found": len(docs),
+                "documents": docs,
+                "llm_reasoning": llm_output
+            }
+        }
     }

@@ -1,23 +1,23 @@
 from config import openai_client, OPENAI_MODEL, MAX_TOKENS
 
-def generate_response(email_context: dict, security_result: dict, doc_info: dict) -> str:
+def generate_response(email_context: dict, security_result: dict, doc_info: dict) -> dict:
     """
     Generate natural email response
-    Returns: string with email body
+    Returns: dict with email response and step info
     """
     print("\\n✍️  [Agent 3: Response Generator] Crafting reply...")
-    
+
+    selected_doc = None
     if security_result['approved']:
         # Find the selected document
-        selected_doc = None
         for doc in doc_info['documents']:
             if doc['id'] == security_result.get('selected_doc'):
                 selected_doc = doc
                 break
-        
+
         if not selected_doc and doc_info['documents']:
             selected_doc = doc_info['documents'][0]
-        
+
         prompt = f"""Write a brief, professional email response providing the requested document.
 
 ORIGINAL EMAIL:
@@ -63,4 +63,20 @@ Do not include greeting or signature, just the body."""
         messages=[{"role": "user", "content": prompt}]
     )
 
-    return response.choices[0].message.content
+    email_response = response.choices[0].message.content
+
+    # Return structured data with step info
+    return {
+        "email_response": email_response,
+        "selected_document": selected_doc,
+        "step_info": {
+            "agent": "Response Generator",
+            "status": "complete",
+            "icon": "✍️",
+            "data": {
+                "email_response": email_response,
+                "response_type": "approved" if security_result['approved'] else "denied",
+                "document_provided": selected_doc is not None
+            }
+        }
+    }
